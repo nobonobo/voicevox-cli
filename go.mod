@@ -1,4 +1,4 @@
-module speak
+module github.com/nobonobo/voicevox-cli
 
 go 1.17
 
