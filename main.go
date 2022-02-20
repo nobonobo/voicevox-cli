@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"flag"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"strconv"
@@ -62,6 +63,7 @@ type config struct {
 	intonation float64
 	volume     float64
 	pitch      float64
+	output     string
 }
 
 func getSpeakers(cfg config) Speakers {
@@ -124,7 +126,7 @@ func synth(cfg config, id int, params *Params) ([]byte, error) {
 	if _, err := io.Copy(buff, resp.Body); err != nil {
 		return nil, err
 	}
-	return buff.Bytes()[44:], nil
+	return buff.Bytes(), nil
 }
 
 func playback(params *Params, b []byte) error {
@@ -152,6 +154,7 @@ func main() {
 	cfg := config{}
 	flag.StringVar(&cfg.endpoint, "endpoint", "http://localhost:50021", "api endpoint")
 	flag.IntVar(&cfg.speaker, "speaker", 0, "speaker")
+	flag.StringVar(&cfg.output, "o", "", "output wav file")
 	flag.IntVar(&cfg.style, "style", 0, "style")
 	flag.Float64Var(&cfg.speed, "speed", 1.0, "speed")
 	flag.Float64Var(&cfg.intonation, "intonation", 1.0, "intonation")
@@ -180,7 +183,13 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	if err := playback(params, b); err != nil {
-		log.Fatal(err)
+	if len(cfg.output) > 0 {
+		if err := ioutil.WriteFile(cfg.output, b, 0644); err != nil {
+			log.Fatal(err)
+		}
+	} else {
+		if err := playback(params, b[44:]); err != nil {
+			log.Fatal(err)
+		}
 	}
 }
