@@ -13,7 +13,7 @@ CLI for [VOICEVOX](https://voicevox.hiroshiba.jp).
 prerequired:
 
 ```shell
-docker run -d -p 50021:50021 hiroshiba/voicevox_engine:cpu-ubuntu20.04-0.10.4
+docker run -d -p 50021:50021 voicevox/voicevox_engine:cpu-ubuntu20.04-0.10.4
 ```
 
 example:
